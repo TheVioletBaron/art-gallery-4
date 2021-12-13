@@ -67,7 +67,7 @@ double mouse_x=-10.0, mouse_y=-10.0;
 //initialized to a point outside the window
 
 //when this is 1, then clicking the mouse results in those points being stored in poly
-int poly_init_mode = 0; 
+int poly_init_mode = 1; 
 
 
 
@@ -124,7 +124,7 @@ void mousepress(int button, int state, int x, int y) {
     //corner, this means we have to reflect y
     mouse_x = (double)x;
     mouse_y = (double)(WINDOWSIZE - y); 
-
+https://github.com/orgs/bowdoin-csci3250-f21/rgit@github.com:lauratoma/artgallery-startup.gitpositories?type=all
     printf("mouse click at (x=%.1f, y=%.1f)\n", mouse_x, mouse_y);
 
     if (poly_init_mode ==1) {

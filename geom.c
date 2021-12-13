@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <iostream>
 
 /* **************************************** */
 /* returns the signed area of triangle abc. The area is positive if c
@@ -11,7 +11,7 @@
  */
 int signed_area2D(point2D a, point2D b, point2D c) {
 
-  return 1; 
+  return (b.x - a.x)(c.y - b.y) - (c.x - b.x)(b.y - a.y); 
 }
 
 
@@ -20,7 +20,7 @@ int signed_area2D(point2D a, point2D b, point2D c) {
 /* return 1 if p,q,r collinear, and 0 otherwise */
 int collinear(point2D p, point2D q, point2D r) {
   
-  return 1; 
+  return signed_area2D(p, q, r) != 0; 
 }
 
 
@@ -29,23 +29,12 @@ int collinear(point2D p, point2D q, point2D r) {
 /* return 1 if c is  strictly left of ab; 0 otherwise */
 int left_strictly(point2D a, point2D b, point2D c) {
   
-  return 1; 
+  return signed_area2D(a, b, c) > 0; 
 }
 
 
 /* return 1 if c is left of ab or on ab; 0 otherwise */
 int left_on(point2D a, point2D b, point2D c) {
 
-
+  return signed_area2D(a, b, c) >= 0; 
 } 
-
-
-/* compute the convex hull of the points in p; the points on the CH
-are returned as a listx */
-pointNode* graham_scan(point2D* p, int n) {
-
-  
-
-  return NULL; 
-}
-
