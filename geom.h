@@ -39,7 +39,7 @@ int left_strictly (point2D a, point2D b, point2D c);
 /* return 1 if c is left of ab or on ab; 0 otherwise */
 int left_on(point2D a, point2D b, point2D c); 
 
-
+void compute_visible_polygon();
 
 /* compute the convex hull of the points in p; the points on the CH
    are returned as a list or vector.

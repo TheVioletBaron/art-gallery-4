@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 
+using namespace std;
 /* **************************************** */
 /* returns the signed area of triangle abc. The area is positive if c
    is to the left of ab, 0 if a,b,c are collinear; and negative if c
@@ -11,7 +13,7 @@
  */
 int signed_area2D(point2D a, point2D b, point2D c) {
 
-  return (b.x - a.x)(c.y - b.y) - (c.x - b.x)(b.y - a.y); 
+  return (b.x - a.x)*(c.y - b.y) - (c.x - b.x)*(b.y - a.y); 
 }
 
 
@@ -38,3 +40,10 @@ int left_on(point2D a, point2D b, point2D c) {
 
   return signed_area2D(a, b, c) >= 0; 
 } 
+
+vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
+  vector <point2D> visible;
+  for (int i = 0; i < poly.size(); i++) {
+  }
+  return visible;
+}

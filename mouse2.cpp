@@ -8,7 +8,7 @@ What it does:  The user can enter a polygon by clicking on the mouse.
 */
 
 #include "geom.h"
-
+#include "geom.cpp"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -61,6 +61,12 @@ const int WINDOWSIZE = 750;
 
 //the current polygon 
 vector<point2D>  poly;
+
+//the current visible polygon 
+vector<point2D>  visible;
+
+//the guard
+point2D guard;
 
 //coordinates of last mouse click
 double mouse_x=-10.0, mouse_y=-10.0; 
@@ -124,12 +130,16 @@ void mousepress(int button, int state, int x, int y) {
     //corner, this means we have to reflect y
     mouse_x = (double)x;
     mouse_y = (double)(WINDOWSIZE - y); 
-https://github.com/orgs/bowdoin-csci3250-f21/rgit@github.com:lauratoma/artgallery-startup.gitpositories?type=all
     printf("mouse click at (x=%.1f, y=%.1f)\n", mouse_x, mouse_y);
 
     if (poly_init_mode ==1) {
       point2D p = {mouse_x, mouse_y}; 
       poly.push_back(p);
+    } else if (poly_init_mode ==2) {
+      poly_init_mode = 0;
+      guard = {mouse_x, mouse_y};
+      printf("called\n");
+      visible = compute_visible_polygon(poly, guard);
     }
   }
   
@@ -185,7 +195,6 @@ int main(int argc, char** argv) {
 
   initialize_polygon();
   print_polygon(poly);
-
 
   /* initialize GLUT  */
   glutInit(&argc, argv);
@@ -269,7 +278,12 @@ void display(void) {
   //now we draw in our local coordinate system (0,0) to
   //(WINSIZE,WINSIZE), with the origin in the lower left corner.
   draw_polygon(poly); 
+  draw_polygon(visible);
   
+
+  //draw in the position of the guard
+  draw_circle(guard.x, guard.y);
+
   //draw a circle where the mouse was last clicked. Note that this
   //point is stored as a global variable and is modified by the mouse
   //handler function
@@ -304,6 +318,9 @@ void keypress(unsigned char key, int x, int y) {
     poly_init_mode=0; 
     glutPostRedisplay();
     break; 
+  case 'g':
+    poly_init_mode=2;
+    glutPostRedisplay();
   } 
 }
 
