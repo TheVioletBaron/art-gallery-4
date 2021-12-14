@@ -1,7 +1,7 @@
 #ifndef __geom_h
 #define __geom_h
 
-
+#include <stdio.h>
 
 typedef struct _point2d {
   int x,y; 
@@ -46,5 +46,8 @@ void compute_visible_polygon();
 */
 pointNode* graham_scan(point2D* p, int n);
 
+void print_point(point2D p) {
+        printf("%d, %d\n", p.x, p.y);
+}
 
 #endif

@@ -224,12 +224,16 @@ int main(int argc, char** argv) {
 
 /* ****************************** */
 /* draw the polygon */
-void draw_polygon(vector<point2D> poly){
+void draw_polygon(vector<point2D> poly, int color){
 
   if (poly.size() == 0) return; 
 
   //set color 
-  glColor3fv(yellow);   
+  glColor3fv(yellow);
+
+  if (color == 2) {
+    glColor3fv(red);
+  }
   
   int i;
   for (i=0; i<poly.size()-1; i++) {
@@ -245,7 +249,6 @@ void draw_polygon(vector<point2D> poly){
     glVertex2f(poly[0].x, poly[0].y);
     glEnd();
 }
-
 
 
 
@@ -277,8 +280,8 @@ void display(void) {
 
   //now we draw in our local coordinate system (0,0) to
   //(WINSIZE,WINSIZE), with the origin in the lower left corner.
-  draw_polygon(poly); 
-  draw_polygon(visible);
+  draw_polygon(poly, 1); 
+  draw_polygon(visible, 2);
   
 
   //draw in the position of the guard
