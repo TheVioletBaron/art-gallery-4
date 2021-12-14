@@ -50,4 +50,6 @@ void print_point(point2D p) {
         printf("%d, %d\n", p.x, p.y);
 }
 
+float calc_dist(point2D a, point2D b);
+
 #endif

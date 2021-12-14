@@ -66,26 +66,38 @@ bool is_visible(vector <point2D> poly, point2D p, point2D guard, int j) {
 }
 
 point2D calculate_intersect(point2D p0, point2D p1, point2D p2, point2D p3) {
-	float s1_x, s1_y, s2_x, s2_y;
-	s1_x = p1.x - p0.x;
-	s1_y = p1.y - p0.y;
-	s2_x = p3.x - p2.x;
-	s2_y = p3.y - p2.y;
 
-	float s, t;
-	s = (-s1_y * (p0.x - p2.x) + s1_x * (p0.y - p2.y)) / (-s2_x * s1_y + s1_x * s2_y);
-	t = (s2_x * (p0.y - p2.x) + s1_y * (p0.x - p2.x)) / (-s2_x * s1_y + s1_x * s2_y);
+	point2D k; //to return
 
-	point2D r;
+	// calculate the intersection of the lines
+	int al = p1.y - p0.y;
+	int bl = p0.x - p1.x;
+	int cl = al*p0.x + bl*p0.y;
 
-	if (s >= 0 && s <=1 && t >= 0 && t <= 1)
-	{
-		r.x = p0.x + t * s1_x;
-		r.y = p0.y + t * s1_y;
-	} else {
-		r.x = -1;
+	int ar = p3.y - p2.y;
+	int br = p2.x - p3.x;
+	int cr = ar*p2.x + br*p2.y;
+
+	int det = al*br - ar*bl;
+
+	k.x = (br * cl - bl * cr)/det;
+	k.y = (al * cr - ar * cl)/det;
+
+
+	// check whether the intersection falls within the line segment
+	if ((((p0.x < k.x) and (k.x < p1.x)) or ((p1.x < k.x) and (k.x < p0.x))) and
+		(((p0.y < k.y) and (k.y < p1.y)) or ((p1.y < k.y) and (k.y < p0.y)))) {
+
+		// check whether the intersection falls on the correct portion of the ray
+		float a = calc_dist(k, p2);
+		float b = calc_dist(p2, p3);
+		float c = calc_dist(k, p3);
+		//if ((a + b == c) and (c > b)) {
+			return k;
+		//}
 	}
-	return r;
+	k.x = -1;
+	return k;
 }
 
 float calc_dist(point2D a, point2D b) {
@@ -97,6 +109,7 @@ point2D ray_extend(vector <point2D> poly, point2D p, point2D guard, int j) {
 	for (int i = 1; i < poly.size(); i++) {
 		if ((i != j) and (i - 1 != j)) {
 			point2D r = calculate_intersect(poly[i - 1], poly[i], p, guard);
+			print_point(r);
 			if (r.x != -1) {
 				cand.push_back(r);
 			}
@@ -104,6 +117,7 @@ point2D ray_extend(vector <point2D> poly, point2D p, point2D guard, int j) {
 	}
 	if ((0 != j) and (poly.size() - 1 != j)) {
 		point2D r = calculate_intersect(poly[0], poly[poly.size() - 1], p, guard);
+		print_point(r);
 		if (r.x != -1) {
 			cand.push_back(r);
 		}
@@ -126,14 +140,20 @@ point2D ray_extend(vector <point2D> poly, point2D p, point2D guard, int j) {
 }
 
 vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
+
+	printf("\n\n\nComputing polygon\n");
 	vector <point2D> visible;
 
-	int state = -1;
+	int state = 1;
 	for (int i = 0; i < poly.size(); i++) {
+		printf("\nNew point: ");
 		print_point(poly[i]);
 		if (is_visible(poly, poly[i], guard, i)) {
+			printf("Point is visible\n");
 			if (state == 0) {
+				printf("Potential cusp located: ");
 				point2D r = ray_extend(poly, poly[i], guard, i);
+				print_point(r);
 				if (r.x != -1) {
 					printf("True vertex\n");
 					visible.push_back(r);
@@ -147,8 +167,11 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 			visible.push_back(p);
 			state = 1;
 		} else {
+			printf("Point is invisible\n");
 			if (state == 1) {
+				printf("Potential cusp located\n");
 				point2D r = ray_extend(poly, poly[i], guard, i);
+				print_point(r);
 				if (r.x != -1) {
 					printf("True vertex\n");
 					visible.push_back(r);
@@ -156,7 +179,7 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 					printf("False vertex\n");
 				}
 			}
-			state == 0;
+			state = 0;
 		}
 	}
 	printf("There are %d visible edges\n", visible.size());
