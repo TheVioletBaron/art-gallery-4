@@ -85,16 +85,21 @@ point2D calculate_intersect(point2D p0, point2D p1, point2D p2, point2D p3) {
 
 
 	// check whether the intersection falls within the line segment
-	if ((((p0.x < k.x) and (k.x < p1.x)) or ((p1.x < k.x) and (k.x < p0.x))) and
-		(((p0.y < k.y) and (k.y < p1.y)) or ((p1.y < k.y) and (k.y < p0.y)))) {
+	float aq = calc_dist(p0, k);
+	float bq = calc_dist(p1, k);
+	float ab = calc_dist(p0, p1);
 
-		// check whether the intersection falls on the correct portion of the ray
-		float a = calc_dist(k, p2);
-		float b = calc_dist(p2, p3);
-		float c = calc_dist(k, p3);
-		//if ((a + b == c) and (c > b)) {
-			return k;
-		//}
+	printf("aq + bq = %f, ab = %f\n", aq + bq, ab);
+
+	float qp = calc_dist(k, p2);
+	float pg = calc_dist(p2, p3);
+	float gq = calc_dist(p3, k);
+
+	int prec = 3;
+
+	if (((ab - prec) <= (aq + bq)) and ((aq + bq) <= (ab + prec)) and
+		(((gq - prec) <= (qp + pg)) and ((qp + pg) <= (gq + prec)))) {
+		return k;
 	}
 	k.x = -1;
 	return k;
