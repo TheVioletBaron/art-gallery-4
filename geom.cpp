@@ -89,12 +89,12 @@ point2D calculate_intersect(point2D p0, point2D p1, point2D p2, point2D p3) {
 	float bq = calc_dist(p1, k);
 	float ab = calc_dist(p0, p1);
 
-	printf("aq + bq = %f, ab = %f\n", aq + bq, ab);
-
 	float qp = calc_dist(k, p2);
 	float pg = calc_dist(p2, p3);
 	float gq = calc_dist(p3, k);
 
+	// becuase wer're dealing with finite precision floating point numbers,
+	// this variable specfies the margin of error for "equality"
 	int prec = 3;
 
 	if (((ab - prec) <= (aq + bq)) and ((aq + bq) <= (ab + prec)) and
@@ -175,7 +175,7 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 			printf("Point is invisible\n");
 			if (state == 1) {
 				printf("Potential cusp located\n");
-				point2D r = ray_extend(poly, poly[i], guard, i);
+				point2D r = ray_extend(poly, poly[i - 1], guard, i - 1);
 				print_point(r);
 				if (r.x != -1) {
 					printf("True vertex\n");
@@ -186,6 +186,40 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 			}
 			state = 0;
 		}
+	}
+	int p = poly.size() - 1;
+	if (is_visible(poly, poly[0], guard, 0)) {
+		printf("Point is visible\n");
+		if (state == 0) {
+			printf("Potential cusp located: ");
+			point2D r = ray_extend(poly, poly[0], guard, 0);
+			print_point(r);
+			if (r.x != -1) {
+				printf("True vertex\n");
+				visible.push_back(r);
+			} else {
+				printf("False vertex\n");
+			}
+		}
+		point2D p;
+		p.x = poly[0].x;
+		p.y = poly[0].y;
+		visible.push_back(p);
+		state = 1;
+	} else {
+		printf("Point is invisible\n");
+		if (state == 1) {
+			printf("Potential cusp located\n");
+			point2D r = ray_extend(poly, poly[p], guard, p);
+			print_point(r);
+			if (r.x != -1) {
+				printf("True vertex\n");
+				visible.push_back(r);
+			} else {
+				printf("False vertex\n");
+			}
+		}
+		state = 0;
 	}
 	printf("There are %d visible edges\n", visible.size());
 	return visible;
