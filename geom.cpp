@@ -149,17 +149,123 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 	printf("\n\n\nComputing polygon\n");
 	vector <point2D> visible;
 
-	char state = 'v';
 	vector <char> status;
 	for (int i = 0; i < poly.size(); i++) {
-		if (is_visible(poly, poly[i], guard, i) {
-			if (state == 'v') {
-				status.push_back('v');
-			}
+		if (is_visible(poly, poly[i], guard, i)) {
+			status.push_back('v');
 		} else {
 			status.push_back('i');
 		}
 	}
+	status.insert(status.begin(), status[status.size() - 1]);
+	status.push_back(status[1]);
+	for (int i = 1; i < status.size() - 1; i++) {
+		if (((status[i - 1] == 'i') and (status[i] == 'v') and (status[i + 1] == 'i')) or
+			(((status[i - 1] == 'v') or (status[i - 1] == 'l') or (status[i - 1] == 'r'))
+				and (status[i] == 'v') and (status[i + 1] == 'i')) or
+			((status[i - 1] == 'i') and (status[i] == 'v') and (status[i + 1] == 'v'))) {
+			if (signed_area2D(guard, poly[i - 1], poly[i - 2]) < 0) {
+				status[i] = 'l';
+			} else {
+				status[i] = 'r';
+			}
+		}
+	}
+	for (int i = 0; i < poly.size(); i++) {
+		if (status[i + 1] == 'v') {
+			point2D p;
+			p.x = poly[i].x;
+			p.y = poly[i].y;
+			visible.push_back(p);
+		} else if (status[i + 1] == 'l') {
+			point2D p;
+			p.x = poly[i].x;
+			p.y = poly[i].y;
+			visible.push_back(p);
+			point2D r = ray_extend(poly, poly[i], guard, i);
+			if (r.x != -1) { //Should never happen
+				visible.push_back(r);
+			}
+		} else if (status[i + 1] == 'r') {
+			point2D r = ray_extend(poly, poly[i], guard, i);
+			if (r.x != -1) { //Should never happen
+				visible.push_back(r);
+			}
+			point2D p;
+			p.x = poly[i].x;
+			p.y = poly[i].y;
+			visible.push_back(p);
+		}
+	}
+
+	/*
+	int state = 1;
+		printf("\nNew point: ");
+		print_point(poly[i]);
+		if (is_visible(poly, poly[i], guard, i)) {
+			printf("Point is visible\n");
+			if (state == 0) {
+				printf("Potential cusp located: ");
+				print_point(r);
+				if (r.x != -1) {
+					printf("True vertex\n");
+					visible.push_back(r);
+				} else {
+					printf("False vertex\n");
+				}
+			}
+			state = 1;
+		} else {
+			printf("Point is invisible\n");
+			if (state == 1) {
+				printf("Potential cusp located\n");
+				point2D r = ray_extend(poly, poly[i - 1], guard, i - 1);
+				print_point(r);
+				if (r.x != -1) {
+					printf("True vertex\n");
+					visible.push_back(r);
+				} else {
+					printf("False vertex\n");
+				}
+			}
+			state = 0;
+		}
+	}
+
+	int p = poly.size() - 1;
+	if (is_visible(poly, poly[0], guard, 0)) {
+		printf("Point is visible\n");
+		if (state == 0) {
+			printf("Potential cusp located: ");
+			point2D r = ray_extend(poly, poly[0], guard, 0);
+			print_point(r);
+			if (r.x != -1) {
+				printf("True vertex\n");
+				visible.push_back(r);
+			} else {
+				printf("False vertex\n");
+			}
+		}
+		point2D p;
+		p.x = poly[0].x;
+		p.y = poly[0].y;
+		visible.push_back(p);
+		state = 1;
+	} else {
+		printf("Point is invisible\n");
+		if (state == 1) {
+			printf("Potential cusp located\n");
+			point2D r = ray_extend(poly, poly[p], guard, p);
+			print_point(r);
+			if (r.x != -1) {
+				printf("True vertex\n");
+				visible.push_back(r);
+			} else {
+				printf("False vertex\n");
+			}
+		}
+		state = 0;
+	} */
 	printf("There are %d visible edges\n", visible.size());
 	return visible;
 }
