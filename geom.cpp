@@ -149,77 +149,16 @@ vector <point2D> compute_visible_polygon(vector <point2D> poly, point2D guard) {
 	printf("\n\n\nComputing polygon\n");
 	vector <point2D> visible;
 
-	int state = 1;
+	char state = 'v';
+	vector <char> status;
 	for (int i = 0; i < poly.size(); i++) {
-		printf("\nNew point: ");
-		print_point(poly[i]);
-		if (is_visible(poly, poly[i], guard, i)) {
-			printf("Point is visible\n");
-			if (state == 0) {
-				printf("Potential cusp located: ");
-				point2D r = ray_extend(poly, poly[i], guard, i);
-				print_point(r);
-				if (r.x != -1) {
-					printf("True vertex\n");
-					visible.push_back(r);
-				} else {
-					printf("False vertex\n");
-				}
+		if (is_visible(poly, poly[i], guard, i) {
+			if (state == 'v') {
+				status.push_back('v');
 			}
-			point2D p;
-			p.x = poly[i].x;
-			p.y = poly[i].y;
-			visible.push_back(p);
-			state = 1;
 		} else {
-			printf("Point is invisible\n");
-			if (state == 1) {
-				printf("Potential cusp located\n");
-				point2D r = ray_extend(poly, poly[i - 1], guard, i - 1);
-				print_point(r);
-				if (r.x != -1) {
-					printf("True vertex\n");
-					visible.push_back(r);
-				} else {
-					printf("False vertex\n");
-				}
-			}
-			state = 0;
+			status.push_back('i');
 		}
-	}
-	int p = poly.size() - 1;
-	if (is_visible(poly, poly[0], guard, 0)) {
-		printf("Point is visible\n");
-		if (state == 0) {
-			printf("Potential cusp located: ");
-			point2D r = ray_extend(poly, poly[0], guard, 0);
-			print_point(r);
-			if (r.x != -1) {
-				printf("True vertex\n");
-				visible.push_back(r);
-			} else {
-				printf("False vertex\n");
-			}
-		}
-		point2D p;
-		p.x = poly[0].x;
-		p.y = poly[0].y;
-		visible.push_back(p);
-		state = 1;
-	} else {
-		printf("Point is invisible\n");
-		if (state == 1) {
-			printf("Potential cusp located\n");
-			point2D r = ray_extend(poly, poly[p], guard, p);
-			print_point(r);
-			if (r.x != -1) {
-				printf("True vertex\n");
-				visible.push_back(r);
-			} else {
-				printf("False vertex\n");
-			}
-		}
-		state = 0;
 	}
 	printf("There are %d visible edges\n", visible.size());
 	return visible;
